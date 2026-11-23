@@ -861,7 +861,7 @@ function renderSetup(){
       el.onclick = () => { S.flash = v; beep(660, .05); renderSetup(); };
       opts.appendChild(el);
     });
-    note.textContent = '閃光燈在暗一點的地方效果最明顯';
+    note.innerHTML = S.flash ? '<span style="color:var(--yel)">☀ 先把手機螢幕亮度調到最高</span>，閃光才會夠亮。<br>在暗一點的地方效果最明顯' : '閃光燈在暗一點的地方效果最明顯';
   }
   $('setupNext').textContent = n === 4 ? '準備好了，去拍照 ▶' : '下一步 ▶';
 }
@@ -877,7 +877,7 @@ function enterShoot(){
   stepHead(document.querySelector('#s-shoot .stephead'), 5, () => { if(S.busy) return; S.setupStep = 4; renderSetup(); go('s-setup'); mountPreview('setupPv'); });
   go('s-shoot'); mountPreview('shootPv'); if(!camOK) startCam(); startLoop();
   const bg = BGS.find(b => b.id === S.bg).name, f = FILTERS.find(x => x.id === S.filter).name;
-  $('summary').innerHTML = `<span>${bg}</span> · <span>${f}</span> · <span>${S.flash ? '閃光燈' : '不開閃光'}</span><br>會連拍 ${L().shots} 張，等一下再挑要哪幾張`;
+  $('summary').innerHTML = `<span>${bg}</span> · <span>${f}</span> · <span>${S.flash ? '閃光燈' : '不開閃光'}</span><br>會連拍 ${L().shots} 張，等一下再挑要哪幾張${S.flash ? '<br><span>☀ 螢幕亮度調到最高了嗎？</span>' : ''}`;
   renderDots(); updateShootBtn();
 }
 function renderDots(){
