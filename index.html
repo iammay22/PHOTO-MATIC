@@ -116,7 +116,7 @@ canvas,img{image-rendering:auto}
   box-shadow:0 0 0 3px var(--ink)}
 #screenFlash{position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:100}
 #screenFlash.on{opacity:1}
-#screenFlash.fade{transition:opacity .3s steps(3)}
+#screenFlash.fade{transition:opacity .25s steps(3)}
 .shotdots{display:flex;gap:6px;justify-content:center;margin:0 0 16px}
 .shotdots i{width:22px;height:22px;background:#4b3f77;box-shadow:0 0 0 3px var(--ink);display:grid;place-items:center;
   font-family:var(--pixel);font-size:9px;font-style:normal;color:#8d84b5}
@@ -141,6 +141,7 @@ canvas,img{image-rendering:auto}
 .pool button.used canvas{opacity:.45}
 .pool .badge{position:absolute;left:-3px;top:-3px;min-width:24px;height:24px;background:var(--red);color:#fff;
   font-family:var(--pixel);font-size:10px;line-height:24px;text-align:center;box-shadow:0 0 0 3px var(--ink)}
+.linkbtn[hidden]{display:none}
 .linkbtn{display:block;margin:0 auto 10px;color:#cfc6e8;font-size:14px;text-decoration:underline;text-underline-offset:4px}
 
 /* 裝飾 */
@@ -160,7 +161,7 @@ canvas,img{image-rendering:auto}
 .panel h3::before{content:"";width:8px;height:8px;background:var(--red);flex:none}
 .panel h3 small{opacity:.6;font-size:12px}
 .panel h3:not(:first-child){margin-top:18px}
-.swatches{display:flex;gap:12px;flex-wrap:wrap;padding-left:3px}
+.swatches{display:flex;gap:12px;flex-wrap:wrap;padding:3px 3px 14px}
 .swatch{width:36px;height:36px;box-shadow:0 0 0 3px var(--ink)}
 .swatch.on{box-shadow:0 0 0 3px var(--ink),0 0 0 6px var(--red)}
 .toggle{margin-left:auto;display:flex;box-shadow:0 0 0 3px var(--ink)}
@@ -185,11 +186,19 @@ canvas,img{image-rendering:auto}
 .pbar i{display:block;height:100%;width:0;background:repeating-linear-gradient(90deg,var(--yel) 0 12px,var(--yel-d) 12px 16px)}
 
 /* 結果 */
+.tray-box{background:#3a3150;padding:16px;margin:6px 4px 22px;display:flex;justify-content:center;
+  box-shadow:inset 0 6px 0 rgba(0,0,0,.35),0 -4px 0 var(--ink),0 4px 0 var(--ink),-4px 0 0 var(--ink),4px 0 0 var(--ink)}
+.tray-box img{max-width:100%;max-height:52vh;display:block;box-shadow:0 0 0 3px var(--ink),0 8px 0 rgba(0,0,0,.4)}
+.endlinks{display:flex;flex-direction:column;align-items:center;gap:14px;margin:6px 0 8px}
+.gesture-tip{color:#cfc6e8;font-size:13px;align-self:center}
+.swatch{position:relative}
+.swatch .ltd{position:absolute;left:50%;bottom:-16px;transform:translateX(-50%);white-space:nowrap;font-size:11px;color:var(--red)}
+.tray-label{grid-column:1/-1;font-size:13px;color:var(--red);margin-top:6px}
 .result-title{font-family:var(--pixel);font-size:22px;color:var(--yel);text-align:center;text-shadow:3px 3px 0 var(--red-d);margin:10px 0 20px}
 .result-img{display:flex;justify-content:center;margin-bottom:26px}
 .result-img img{max-width:100%;max-height:62vh;display:block;box-shadow:0 0 0 4px var(--ink),0 10px 0 rgba(0,0,0,.35)}
 .bonus{padding:16px 14px;margin:10px 4px 26px}
-.bonus h3{font-size:17px;font-weight:normal;display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.bonus h3{font-size:17px;font-weight:normal;text-align:center;margin-bottom:12px}
 .bonus h3 .tag{font-family:var(--pixel);font-size:9px;background:var(--red);color:#fff;padding:5px 6px 4px}
 .bonus p{font-size:13px;opacity:.7;margin-bottom:12px;line-height:1.6}
 .bonus video{display:block;max-width:100%;max-height:46vh;margin:0 auto 18px;box-shadow:0 0 0 3px var(--ink);background:#000}
@@ -214,10 +223,11 @@ footer{text-align:center;font-family:var(--pixel);font-size:9px;color:#8d84b5;pa
     <div class="pbox how">
       <div><b>1</b>選相紙、背景、濾鏡、閃光燈</div>
       <div><b>2</b>倒數連拍，挑喜歡的放進相紙</div>
-      <div><b>3</b>貼貼紙，沖洗照片，再附一份動態版</div>
+      <div><b>3</b>貼貼紙沖洗，還會附一段花絮影片</div>
     </div>
     <button class="pbtn" id="startBtn">投幣開始 ▶</button>
     <p class="note">照片只存在你的裝置上，不會上傳</p>
+    <button class="linkbtn" id="shareSiteHome">分享這個拍貼機 ▶</button>
   </section>
 
   <!-- 1 選相紙 -->
@@ -269,10 +279,8 @@ footer{text-align:center;font-family:var(--pixel);font-size:9px;color:#8d84b5;pa
       </div>
     </div>
     <div class="sel-tools" id="selTools" hidden>
-      <button data-act="smaller">縮小</button>
-      <button data-act="bigger">放大</button>
-      <button data-act="rotate">轉一下</button>
-      <button data-act="del" class="del">刪掉</button>
+      <span class="gesture-tip">兩指捏合放大、旋轉</span>
+      <button data-act="del" class="del">刪掉這張</button>
     </div>
     <div class="pbox panel">
       <h3>相框顏色</h3>
@@ -289,23 +297,26 @@ footer{text-align:center;font-family:var(--pixel);font-size:9px;color:#8d84b5;pa
     <div class="machine"><div class="body"></div><div class="paper"></div></div>
     <p id="devText">機台正在沖洗照片…</p>
     <div class="pbar"><i id="devBar"></i></div>
-    <p class="note">順便把動態版錄起來，大概要 10 秒，先別關掉畫面</p>
+    <p class="note">順便剪花絮影片，大概 10 秒，先別關掉畫面</p>
   </section>
 
   <!-- 結果 -->
   <section class="screen" id="result">
-    <h2 class="result-title">沖好了！</h2>
-    <div class="result-img"><img id="resImg" alt="拍貼成品"></div>
-    <button class="pbtn" id="dlPng">下載照片</button>
-    <button class="pbtn ghost" id="sharePng" hidden>分享 / 存到相簿</button>
-    <div class="pbox bonus" id="bonus">
-      <h3><span class="tag">BONUS</span>附贈動態版</h3>
-      <p id="bonusNote">每張照片拍下去前後的那一秒，會來回播放</p>
-      <video id="resVideo" playsinline muted loop autoplay></video>
-      <button class="pbtn blue small" id="dlVideo">下載動態 MP4</button>
-      <button class="pbtn ghost small" id="shareVideo" hidden>分享 / 存到相簿</button>
+    <div class="tray-box"><img id="resImg" alt="拍貼成品"></div>
+    <div class="row">
+      <button class="pbtn ghost" id="editAgain">◀ 再改一下</button>
+      <button class="pbtn yel" id="savePng">儲存照片</button>
     </div>
-    <button class="pbtn yel" id="againBtn">再拍一組</button>
+    <div class="pbox bonus" id="bonus">
+      <h3>花絮影片</h3>
+      <video id="resVideo" playsinline muted loop autoplay></video>
+      <button class="pbtn blue" id="saveVideo">儲存影片</button>
+    </div>
+    <p class="note" id="saveTip"></p>
+    <div class="endlinks">
+      <button class="linkbtn" id="againBtn">再拍一組</button>
+      <button class="linkbtn" id="shareSite">把 PHOTO-MATIC 分享給朋友</button>
+    </div>
   </section>
 </main>
 <footer>MADE BY MAY22</footer>
@@ -350,7 +361,7 @@ const BGS = [
 ];
 const SHADOWS = {
   soft:  { k:16, mid:4, scale:1.02, dx:.025, dy:.012, alpha:.34 },
-  flash: { k:4,  mid:0, scale:1.0,  dx:.04,  dy:.025, alpha:.55 },
+  flash: { k:4,  mid:0, scale:1.0,  dx:.04,  dy:.025, alpha:.62 },
 };
 const FILTERS = [
   { id:'orig',    name:'原片',     sat:1,   con:1,    grain:0 },
@@ -363,6 +374,9 @@ const FILTERS = [
   { id:'punch',   name:'高對比',   sat:1.2, con:1.4,  grain:2 },
   { id:'faded',   name:'淡淡的',   sat:.6,  con:.8,   bri:10, lift:30, grain:6 },
 ];
+// 期間限定：聖誕（11/15～1/6），網址加 ?season=xmas 可以強制打開
+const XMAS = (() => { const q = new URLSearchParams(location.search).get('season'); if(q) return q === 'xmas';
+  const d = new Date(), m = d.getMonth() + 1, day = d.getDate(); return (m === 11 && day >= 15) || m === 12 || (m === 1 && day <= 6); })();
 const FRAMES = [
   { id:'cream',   c:'#f4ecd8', ink:'#1b1b1b' },
   { id:'black',   c:'#121212', ink:'#f4ecd8' },
@@ -370,11 +384,12 @@ const FRAMES = [
   { id:'navy',    c:'#1b2a55', ink:'#f4ecd8' },
   { id:'pink',    c:'#f6b8cb', ink:'#3a1020' },
   { id:'leopard', c:null,      ink:'#fff4e0' },
+  ...(XMAS ? [{ id:'xmas', c:'#1d4d33', ink:'#fff4e0', deco:'xmas', limited:'聖誕限定' }] : []),
 ];
 
 /* ========== 狀態 ========== */
 const S = { layout:'strip', bg:'none', filter:'orig', flash:false, frame:'cream', date:true,
-  pool:[], slots:[], selSlot:-1, busy:false, cur:-1, facing:'user', setupStep:2, stickers:[], selSticker:null };
+  pool:[], slots:[], selSlot:-1, reshootLeft:1, busy:false, cur:-1, facing:'user', setupStep:2, stickers:[], selSticker:null };
 const $ = id => document.getElementById(id);
 const L = () => LAYOUTS[S.layout];
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -537,7 +552,7 @@ const lutCache = new Map();
 function getLut(f, flash){
   const k = f.id + (flash ? 'F' : '');
   if(lutCache.has(k)) return lutCache.get(k);
-  const con = f.con * (flash ? 1.12 : 1), bri = (f.bri || 0) + (flash ? 10 : 0), lift = f.lift || 0;
+  const con = f.con * (flash ? 1.2 : 1), bri = (f.bri || 0) + (flash ? 18 : 0), lift = f.lift || 0;
   const mk = off => { const a = new Uint8ClampedArray(256);
     for(let v = 0; v < 256; v++){ const x = ((v / 255 - .5) * con + .5) * 255 + bri + off; a[v] = lift + x * (1 - lift / 255); }
     return a; };
@@ -562,7 +577,8 @@ function applyFilter(x, w, h, f, composite){
 }
 
 /* ========== 像素圖 ========== */
-const PAL = { k:'#1b1420', y:'#ffd23f', Y:'#fff6b0', p:'#ff8fc0', P:'#ffd1e6', R:'#d94a8c', r:'#e63946', w:'#ffffff', b:'#4d7cff', g:'#94b0c2' };
+const PAL = { k:'#1b1420', y:'#ffd23f', Y:'#fff6b0', p:'#ff8fc0', P:'#ffd1e6', R:'#d94a8c', r:'#e63946', w:'#ffffff', b:'#4d7cff', g:'#94b0c2',
+  G:'#2e8b57', H:'#6fd27f', n:'#7a4a24', B:'#a9d8ff' };
 const SPR = {
   star:['.......k.......','......kyk......','......kyk......','.....kyYyk.....','kkkkkkyYykkkkkk','kyyyyyyYyyyyyyk',
         '.kyyyyyyyyyyyk.','..kyyyyyyyyyk..','...kyyyyyyyk...','..kyyyyyyyyyk..','..kyyyyyyyyyk..','.kyyyykkkyyyyk.',
@@ -576,6 +592,12 @@ const SPR = {
          'kykyyyyykyk','kyykkkkkyyk','.kyyyyyyyk.','..kyyyyyk..','...kkkkk...'],
   bolt:['....kkkk.','...kyyyk.','..kyyyk..','.kyyyk...','kyyyykkkk','kkkkyyyyk','...kyyyk.','..kyyyk..','.kyyk....','kyk......','kk.......'],
   crown:['k.....k.....k','kk...kyk...kk','kyk.kyyyk.kyk','kyykyyyyykyyk','kyyyyyyyyyyyk','kyryyybyyyryk','kyyyyyyyyyyyk','kkkkkkkkkkkkk'],
+  tree:['.....y.....','....kGk....','...kGHGk...','..kGGGrGk..','...kGGGk...','..kGHGGGk..','.kGGyGGGGk.',
+        '..kGGGrGk..','.kGGGGGHGk.','kGrGGGGGyGk','kkkkkkkkkkk','....knk....','....kkk....'],
+  snow:['....B....','.B..B..B.','..B.B.B..','...BwB...','BBBBwBBBB','...BwB...','..B.B.B..','.B..B..B.','....B....'],
+  gift:['...kkkkk...','...kyyyk...','kkkkkykkkkk','krrrryrrrrk','krrrryrrrrk','kyyyyyyyyyk','krrrryrrrrk','krrrryrrrrk','krrrryrrrrk','kkkkkkkkkkk'],
+  cane:['..kkk..','.kwrwk.','kwk.krk','kk..kwk','....krk','....kwk','....krk','....kwk','....krk','....kwk','....kkk'],
+  hat:['.........kk..','.......kkwwk.','.....kkrrkwwk','....krrrrrkk.','...krrrrrrk..','..krrrrrrrrk.','.krrrrrrrrrk.','kwwwwwwwwwwwk','kwwwwwwwwwwwk','kkkkkkkkkkkkk'],
   camera:['...kkkkk........','..kggggggk......','kkkkkkkkkkkkkkkk','krrrrrkkkkrrrryk','krrrrkbbbbkrrrrk','krrrkbbwbbbkrrrk',
           'krrrkbwbbbbkrrrk','krrrkbbbbbbkrrrk','krrrrkbbbbkrrrrk','krrrrrkkkkrrrrrk','kkkkkkkkkkkkkkkk','................'],
 };
@@ -586,6 +608,7 @@ const STICKERS = [
   { id:'bow-black', spr:'bow', pal:{ k:'#000000', p:'#2a2a2a', P:'#777777', R:'#0d0d0d' } },
   { id:'heart-pink', spr:'heart' }, { id:'smile', spr:'smile' }, { id:'bolt', spr:'bolt' }, { id:'crown', spr:'crown' },
   { id:'star-blue', spr:'star', pal:{ y:'#6fa8ff', Y:'#d6e6ff' } },
+  ...(XMAS ? ['tree', 'snow', 'gift', 'cane', 'hat'].map(id => ({ id, spr:id, season:'聖誕限定' })) : []),
 ];
 const sprCanvas = {}, sprURL = {};
 function spriteCanvas(id){
@@ -751,7 +774,27 @@ function frame(){
     octx.drawImage(person, 0, 0);
   }else octx.drawImage(src, 0, 0);
   applyFilter(octx, W, H, FILTERS.find(f => f.id === S.filter), useBg);
+  if(S.flash) flashLook(W, H);
+  if(flashPick) flashPick();
   recordTick();
+}
+
+// 直閃的樣子：臉的位置打亮，往四周快速變暗
+function flashLook(W, H){
+  const m = Math.max(W, H);
+  let g = octx.createRadialGradient(W * .5, H * .42, 0, W * .5, H * .42, m * .5);
+  g.addColorStop(0, 'rgba(255,255,255,.28)'); g.addColorStop(1, 'rgba(255,255,255,0)');
+  octx.save(); octx.globalCompositeOperation = 'soft-light'; octx.fillStyle = g; octx.fillRect(0, 0, W, H);
+  g = octx.createRadialGradient(W * .5, H * .45, m * .25, W * .5, H * .45, m * .75);
+  g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,.42)');
+  octx.globalCompositeOperation = 'multiply'; octx.fillStyle = g; octx.fillRect(0, 0, W, H); octx.restore();
+}
+// 閃光期間每一格都量亮度，留下最亮的那張（鏡頭會自動調曝光，最亮的瞬間不一定在同一時間）
+let flashPick = null;
+const lumC = makeCanvas(24, 18), lumX = lumC.getContext('2d', { willReadFrequently:true });
+function frameLum(){
+  lumX.drawImage(out, 0, 0, 24, 18); const d = lumX.getImageData(0, 0, 24, 18).data; let s = 0;
+  for(let i = 0; i < d.length; i += 4) s += d[i] + d[i + 1] + d[i + 2]; return s;
 }
 
 /* ========== 錄動態 ========== */
@@ -776,7 +819,7 @@ function renderLayoutStep(){
 }
 $('layoutOpts').onclick = e => { const o = e.target.closest('.opt'); if(!o) return; S.layout = o.dataset.layout; beep(660, .05); renderLayoutStep(); };
 $('layoutNext').onclick = () => {
-  ensureAudio(); setupCanvases(); S.setupStep = 2; renderSetup(); go('s-setup'); mountPreview('setupPv');
+  ensureAudio(); S.reshootLeft = 1; S.stickers = []; S.selSticker = null; setupCanvases(); S.setupStep = 2; renderSetup(); go('s-setup'); mountPreview('setupPv');
   if(!camOK) startCam(); startLoop();
 };
 
@@ -832,7 +875,7 @@ $('setupNext').onclick = () => {
 function enterShoot(){
   S.pool = []; S.slots = []; S.selSlot = -1;
   stepHead(document.querySelector('#s-shoot .stephead'), 5, () => { if(S.busy) return; S.setupStep = 4; renderSetup(); go('s-setup'); mountPreview('setupPv'); });
-  go('s-shoot'); mountPreview('shootPv'); startLoop();
+  go('s-shoot'); mountPreview('shootPv'); if(!camOK) startCam(); startLoop();
   const bg = BGS.find(b => b.id === S.bg).name, f = FILTERS.find(x => x.id === S.filter).name;
   $('summary').innerHTML = `<span>${bg}</span> · <span>${f}</span> · <span>${S.flash ? '閃光燈' : '不開閃光'}</span><br>會連拍 ${L().shots} 張，等一下再挑要哪幾張`;
   renderDots(); updateShootBtn();
@@ -849,18 +892,24 @@ function updateShootBtn(){
   else if(!camOK || needsSeg()){ b.textContent = '等一下…'; b.classList.add('off'); }
   else b.textContent = '開始拍照 ▶';
 }
-async function doFlash(on){
-  const f = $('screenFlash');
-  if(on){ f.classList.remove('fade'); f.classList.add('on'); await sleep(260); }
-  return () => { f.classList.add('fade'); f.classList.remove('on'); };
+async function captureStill(){
+  const still = makeCanvas(out.width, out.height), sx = still.getContext('2d');
+  if(!S.flash){ sx.drawImage(out, 0, 0); return still; }
+  const f = $('screenFlash'); f.classList.remove('fade'); f.classList.add('on');
+  await sleep(350);                       // 等鏡頭被白光照亮
+  let best = -1;
+  flashPick = () => { const l = frameLum(); if(l > best){ best = l; sx.drawImage(out, 0, 0); } };
+  await sleep(450);
+  flashPick = null; if(best < 0) sx.drawImage(out, 0, 0);
+  f.classList.add('fade'); f.classList.remove('on');
+  return still;
 }
 async function shootOne(i){
   const cd = $('countdown');
   for(const n of [3, 2, 1]){ cd.textContent = n; beep(n === 1 ? 880 : 660); if(n === 1) startRec(); await sleep(1000); }
   cd.textContent = '';
-  const endFlash = await doFlash(S.flash);
-  const still = makeCanvas(out.width, out.height); still.getContext('2d').drawImage(out, 0, 0);
-  shutterSound(); endFlash();
+  const still = await captureStill();
+  shutterSound();
   const fl = $('flash'); fl.classList.remove('on'); void fl.offsetWidth; fl.classList.add('on');
   await sleep(600);
   let clip = stopRec();
@@ -888,7 +937,8 @@ function geom(){
 }
 function fitBox(G, maxW, maxH){ let w = maxW, h = w * G.H / G.W; if(h > maxH){ h = maxH; w = h * G.W / G.H; } return [w, h]; }
 function thumb(still, w){ const h = Math.round(w * still.height / still.width), c = makeCanvas(w, h); c.getContext('2d').drawImage(still, 0, 0, w, h); return c; }
-const frameBg = f => f.c || `url(${getBg('leopard', 160, 160, true).toDataURL()}) center/cover`;
+const frameBg = f => f.deco === 'xmas' ? 'radial-gradient(#1d4d33 52%,transparent 53%),repeating-linear-gradient(45deg,#d63c4b 0 5px,#fff4e0 5px 10px)'
+  : f.c || `url(${getBg('leopard', 160, 160, true).toDataURL()}) center/cover`;
 function enterPick(){
   S.slots = new Array(L().n).fill(-1); S.selSlot = -1;
   stepHead(document.querySelector('#s-pick .stephead'), 6, () => toast('拍好的照片會不見，要重拍請按最下面'));
@@ -926,12 +976,23 @@ function renderPick(){
     };
     pool.appendChild(el);
   });
+  const rs = $('reshoot'); rs.hidden = S.reshootLeft < 1;
+  rs.textContent = '都不喜歡？全部重拍（只有一次機會）';
   const filled = S.slots.filter(v => v >= 0).length, n = L().n;
   $('pickHint').textContent = S.selSlot >= 0 ? `換掉第 ${S.selSlot + 1} 格：點一張照片` : `已選 ${filled} / ${n}`;
   $('pickNext').classList.toggle('off', filled < n);
 }
 $('pickNext').onclick = () => { if(S.slots.includes(-1)){ toast(`還要再選 ${S.slots.filter(v => v < 0).length} 張`); return; } enterDeco(); };
-$('reshoot').onclick = () => { enterShoot(); };
+$('reshoot').onclick = () => {
+  if(S.reshootLeft < 1) return;
+  if(!confirmTwice('reshoot', '再按一次就會全部重拍，而且只能重拍這一次')) return;
+  S.reshootLeft--; enterShoot();
+};
+const armed = {};
+function confirmTwice(key, msg){
+  if(armed[key] && Date.now() - armed[key] < 3000){ armed[key] = 0; return true; }
+  armed[key] = Date.now(); toast(msg); return false;
+}
 
 /* ========== 成品排版 ========== */
 function boom(i, n){ if(n < 2) return 0; const p = 2 * n - 2, m = i % p; return m < n ? m : p - m; }
@@ -940,22 +1001,42 @@ function compose(x, G, opt = {}){
   const fr = FRAMES.find(f => f.id === S.frame), { W, H } = G;
   if(fr.c){ x.fillStyle = fr.c; x.fillRect(0, 0, W, H); }
   else x.drawImage(getBg('leopard', even(W * .5), even(H * .5), true), 0, 0, W, H);
+  if(fr.deco === 'xmas') drawXmas(x, G);
   G.cells.forEach((c, i) => {
     const shot = S.pool[S.slots[i]];
     if(!shot){ x.fillStyle = '#888'; x.fillRect(c.x, c.y, c.w, c.h); return; }
     x.drawImage(opt.frameIdx == null ? shot.still : shot.clip[boom(opt.frameIdx, shot.clip.length)], c.x, c.y, c.w, c.h);
   });
-  const fy = H - G.foot, cx = W / 2, leo = !fr.c;
+  const fy = H - G.foot, cx = W / 2, leo = !fr.c, brand = fr.deco === 'xmas' ? '★ MERRY XMAS ★' : '★ PHOTO-MATIC ★';
   x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillStyle = fr.ink;
   const txt = (t, y) => { if(leo){ x.lineWidth = 8; x.strokeStyle = '#1b1b1b'; x.lineJoin = 'miter'; x.strokeText(t, cx, y); } x.fillText(t, cx, y); };
   if(S.date){
     x.font = '44px "Press Start 2P", Cubic11, monospace'; txt(dateStr(), fy + G.foot * .44);
-    x.font = '20px "Press Start 2P", Cubic11, monospace'; txt('★ PHOTO-MATIC ★', fy + G.foot * .76);
-  }else{ x.font = '26px "Press Start 2P", Cubic11, monospace'; txt('★ PHOTO-MATIC ★', fy + G.foot * .52); }
+    x.font = '20px "Press Start 2P", Cubic11, monospace'; txt(brand, fy + G.foot * .76);
+  }else{ x.font = '26px "Press Start 2P", Cubic11, monospace'; txt(brand, fy + G.foot * .52); }
   if(opt.stickers) S.stickers.forEach(s => {
     const c = spriteCanvas(s.type), w = s.size * W, h = w * c.height / c.width;
     x.save(); x.translate(s.x * W, s.y * H); x.rotate(s.rot); x.imageSmoothingEnabled = false; x.drawImage(c, -w / 2, -h / 2, w, h); x.restore();
   });
+}
+function drawSprite(x, id, cx, cy, scale, rot = 0){
+  const c = spriteCanvas(id); x.save(); x.translate(cx, cy); x.rotate(rot); x.imageSmoothingEnabled = false;
+  x.drawImage(c, -c.width * scale / 2, -c.height * scale / 2, c.width * scale, c.height * scale); x.restore();
+}
+function drawXmas(x, G){
+  const { W, H } = G, t = 16;
+  // 拐杖糖斜紋外框
+  const pc = makeCanvas(32, 32), px = pc.getContext('2d');
+  px.fillStyle = '#fff4e0'; px.fillRect(0, 0, 32, 32); px.fillStyle = '#d63c4b';
+  for(let i = -32; i < 32; i += 16){ px.beginPath(); px.moveTo(i, 32); px.lineTo(i + 8, 32); px.lineTo(i + 40, 0); px.lineTo(i + 32, 0); px.fill(); }
+  x.fillStyle = x.createPattern(pc, 'repeat');
+  x.fillRect(0, 0, W, t); x.fillRect(0, H - t, W, t); x.fillRect(0, 0, t, H); x.fillRect(W - t, 0, t, H);
+  // 飄雪
+  const R = rng(99), n = Math.round(W * H / 18000);
+  for(let i = 0; i < n; i++) drawSprite(x, 'snow', t + R() * (W - 2 * t), t + R() * (H - 2 * t), 3 + (R() * 4 | 0));
+  // 底部兩棵聖誕樹
+  const fy = H - G.foot / 2 - t / 2, sc = Math.round(G.foot / 22);
+  drawSprite(x, 'tree', t + 30 + 6 * sc, fy, sc); drawSprite(x, 'tree', W - t - 30 - 6 * sc, fy, sc);
 }
 const fontsReady = () => Promise.all([document.fonts.load('44px "Press Start 2P"'), document.fonts.load('16px Cubic11')]).catch(() => {});
 
@@ -983,6 +1064,7 @@ function renderSwatches(){
   FRAMES.forEach(f => {
     const el = document.createElement('button'); el.className = 'swatch' + (S.frame === f.id ? ' on' : '');
     el.style.background = frameBg(f); el.setAttribute('aria-label', f.id);
+    if(f.limited){ const tag = document.createElement('span'); tag.className = 'ltd'; tag.textContent = f.limited; el.appendChild(tag); }
     el.onclick = () => { S.frame = f.id; beep(660, .05); renderSwatches(); drawDeco(); };
     box.appendChild(el);
   });
@@ -991,7 +1073,9 @@ function renderDateToggle(){ [...$('dateToggle').children].forEach(b => b.classL
 $('dateToggle').onclick = e => { const b = e.target.closest('button'); if(!b) return; S.date = b.dataset.v === '1'; renderDateToggle(); drawDeco(); };
 function renderTray(){
   const box = $('tray'); if(box.children.length) return;
+  let labeled = false;
   STICKERS.forEach(s => {
+    if(s.season && !labeled){ const lb = document.createElement('div'); lb.className = 'tray-label'; lb.textContent = '★ ' + s.season; box.appendChild(lb); labeled = true; }
     const el = document.createElement('button'), img = new Image(); img.src = spriteURL(s.id); img.alt = ''; el.appendChild(img);
     el.onclick = () => {
       beep(880, .05);
@@ -1004,30 +1088,55 @@ function renderTray(){
 function place(el, s){ el.style.left = s.x * 100 + '%'; el.style.top = s.y * 100 + '%'; el.style.width = s.size * 100 + '%'; el.style.transform = `translate(-50%,-50%) rotate(${s.rot}rad)`; }
 function renderStickers(){
   const layer = $('stickerLayer'); layer.innerHTML = '';
-  S.stickers.forEach(s => {
-    const el = document.createElement('img'); el.src = spriteURL(s.type); el.draggable = false;
-    el.className = 'stk' + (s === S.selSticker ? ' sel' : ''); place(el, s);
-    el.onpointerdown = e => {
-      e.preventDefault(); e.stopPropagation();
-      if(S.selSticker !== s){ S.selSticker = s; layer.querySelectorAll('.stk').forEach(x => x.classList.remove('sel')); el.classList.add('sel'); $('selTools').hidden = false; }
-      const r = layer.getBoundingClientRect(), ox = e.clientX - s.x * r.width, oy = e.clientY - s.y * r.height;
-      el.setPointerCapture(e.pointerId);
-      el.onpointermove = ev => { s.x = clamp((ev.clientX - ox) / r.width, 0, 1); s.y = clamp((ev.clientY - oy) / r.height, 0, 1); place(el, s); };
-      el.onpointerup = el.onpointercancel = () => { el.onpointermove = null; };
-    };
+  S.stickers.forEach((s, i) => {
+    const el = document.createElement('img'); el.src = spriteURL(s.type); el.draggable = false; el.dataset.i = i;
+    el.className = 'stk' + (s === S.selSticker ? ' sel' : ''); place(el, s); s.el = el;
     layer.appendChild(el);
   });
   $('selTools').hidden = !S.selSticker;
 }
-$('stickerLayer').onpointerdown = e => { if(e.target.id === 'stickerLayer' && S.selSticker){ S.selSticker = null; renderStickers(); } };
+// 手勢：一指拖曳，兩指捏合縮放加旋轉；電腦可以用滾輪縮放
+const ptrs = new Map(); let gesture = null;
+function baseline(){
+  const s = S.selSticker; if(!s || !ptrs.size){ gesture = null; return; }
+  const r = $('stickerLayer').getBoundingClientRect(), pts = [...ptrs.values()];
+  if(pts.length === 1) gesture = { mode:'drag', r, ox: pts[0].x - s.x * r.width, oy: pts[0].y - s.y * r.height };
+  else { const [p, q] = pts;
+    gesture = { mode:'pinch', r, d0: Math.hypot(q.x - p.x, q.y - p.y) || 1, a0: Math.atan2(q.y - p.y, q.x - p.x),
+      size0: s.size, rot0: s.rot, mx0: (p.x + q.x) / 2, my0: (p.y + q.y) / 2, sx0: s.x, sy0: s.y }; }
+}
+$('stickerLayer').addEventListener('pointerdown', e => {
+  const layer = $('stickerLayer'), hit = e.target.closest('.stk');
+  if(!ptrs.size){
+    if(hit){ const s = S.stickers[+hit.dataset.i]; if(S.selSticker !== s){ S.selSticker = s; layer.querySelectorAll('.stk').forEach(x => x.classList.toggle('sel', x === hit)); $('selTools').hidden = false; } }
+    else { if(S.selSticker){ S.selSticker = null; renderStickers(); } return; }
+  }
+  if(!S.selSticker) return;
+  e.preventDefault(); try{ layer.setPointerCapture(e.pointerId); }catch(err){}
+  ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY }); baseline();
+});
+$('stickerLayer').addEventListener('pointermove', e => {
+  if(!ptrs.has(e.pointerId) || !gesture) return;
+  ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  const s = S.selSticker, g = gesture, r = g.r, pts = [...ptrs.values()];
+  if(g.mode === 'drag'){ s.x = clamp((pts[0].x - g.ox) / r.width, 0, 1); s.y = clamp((pts[0].y - g.oy) / r.height, 0, 1); }
+  else if(pts.length >= 2){
+    const [p, q] = pts, d = Math.hypot(q.x - p.x, q.y - p.y), a = Math.atan2(q.y - p.y, q.x - p.x);
+    s.size = clamp(g.size0 * d / g.d0, .04, .9); s.rot = g.rot0 + (a - g.a0);
+    s.x = clamp(g.sx0 + ((p.x + q.x) / 2 - g.mx0) / r.width, 0, 1); s.y = clamp(g.sy0 + ((p.y + q.y) / 2 - g.my0) / r.height, 0, 1);
+  }
+  place(s.el, s);
+});
+const endPtr = e => { if(ptrs.delete(e.pointerId)) baseline(); };
+$('stickerLayer').addEventListener('pointerup', endPtr);
+$('stickerLayer').addEventListener('pointercancel', endPtr);
+$('stickerLayer').addEventListener('wheel', e => {
+  const s = S.selSticker; if(!s) return; e.preventDefault();
+  s.size = clamp(s.size * (e.deltaY < 0 ? 1.08 : 1 / 1.08), .04, .9); if(e.shiftKey) s.rot += e.deltaY > 0 ? .1 : -.1; place(s.el, s);
+}, { passive:false });
 $('selTools').onclick = e => {
-  const b = e.target.closest('button'), s = S.selSticker; if(!b || !s) return;
-  const a = b.dataset.act;
-  if(a === 'bigger') s.size = Math.min(.7, s.size * 1.2);
-  if(a === 'smaller') s.size = Math.max(.05, s.size / 1.2);
-  if(a === 'rotate') s.rot += Math.PI / 12;
-  if(a === 'del'){ S.stickers = S.stickers.filter(x => x !== s); S.selSticker = null; }
-  renderStickers();
+  const b = e.target.closest('button'); if(!b || !S.selSticker) return;
+  S.stickers = S.stickers.filter(x => x !== S.selSticker); S.selSticker = null; renderStickers();
 };
 
 /* ========== 沖洗 ========== */
@@ -1069,7 +1178,7 @@ $('developBtn').onclick = async () => {
   await fontsReady();
   const G = geom(), full = makeCanvas(G.W, G.H); compose(full.getContext('2d'), G, { stickers: true });
   pngBlob = await new Promise(r => full.toBlob(r, 'image/png'));
-  setDev(.12, '順便錄一份動態版…');
+  setDev(.12, '順便剪一段花絮影片…');
   try{ vid = await recordVideo(G, p => setDev(.12 + p * .88)); }catch(e){ console.warn(e); vid = null; }
   setDev(1, '好了！'); beep(1046, .1); await sleep(350);
   showResult(); track('develop', S.layout);
@@ -1077,34 +1186,45 @@ $('developBtn').onclick = async () => {
 
 /* ========== 結果 ========== */
 const canShareFile = f => !!(navigator.canShare && navigator.canShare({ files:[f] }));
+const isTouch = matchMedia('(pointer:coarse)').matches;
 function showResult(){
   go('result');
   const img = $('resImg'), v = $('resVideo');
   if(img.src) URL.revokeObjectURL(img.src); img.src = URL.createObjectURL(pngBlob);
   if(v.src) URL.revokeObjectURL(v.src);
   $('bonus').hidden = !vid;
-  if(vid){
-    v.src = URL.createObjectURL(vid.blob); v.play().catch(() => {});
-    $('dlVideo').textContent = `下載動態 ${vid.ext.toUpperCase()}`;
-    $('bonusNote').textContent = vid.ext === 'mp4' ? '每張照片拍下去前後的那一秒，會來回播放，可以直接發限動'
-      : '這個瀏覽器只能存成 WebM。想要 MP4，換手機 Safari 或新版 Chrome 開';
-    $('shareVideo').hidden = !canShareFile(new File([vid.blob], 'x.' + vid.ext, { type: vid.blob.type }));
-  }
-  $('sharePng').hidden = !canShareFile(new File([pngBlob], 'x.png', { type:'image/png' }));
+  if(vid){ v.src = URL.createObjectURL(vid.blob); v.play().catch(() => {}); }
+  const viaShare = isTouch && canShareFile(new File([pngBlob], 'x.png', { type:'image/png' }));
+  $('saveTip').textContent = viaShare ? '按儲存後會跳出選單，選「儲存影像」就會存進相簿'
+    : vid && vid.ext !== 'mp4' ? '這個瀏覽器的影片只能存成 WebM，想要 MP4 可以換 Safari 或新版 Chrome' : '';
 }
 const fname = ext => `photomatic-${dateStr().replaceAll('.', '')}.${ext}`;
 function download(blob, name){
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name;
   document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 5000);
 }
-async function share(blob, ext, kind){
-  try{ await navigator.share({ files:[new File([blob], fname(ext), { type: blob.type })] }); track('share', kind); }catch(e){}
+// 手機上用分享選單存（才能直接進相簿），電腦就直接下載
+async function save(blob, ext, kind){
+  const file = new File([blob], fname(ext), { type: blob.type });
+  if(isTouch && canShareFile(file)){
+    try{ await navigator.share({ files:[file] }); track('save', kind); }catch(e){}
+  }else{ download(blob, fname(ext)); track('save', kind); }
 }
-$('dlPng').onclick = () => { download(pngBlob, fname('png')); track('download', 'png'); };
-$('dlVideo').onclick = () => { if(vid){ download(vid.blob, fname(vid.ext)); track('download', vid.ext); } };
-$('sharePng').onclick = () => share(pngBlob, 'png', 'png');
-$('shareVideo').onclick = () => vid && share(vid.blob, vid.ext, 'video');
-$('againBtn').onclick = () => { S.pool = []; S.slots = []; S.stickers = []; S.selSticker = null; go('home'); };
+$('savePng').onclick = () => save(pngBlob, 'png', 'png');
+$('saveVideo').onclick = () => vid && save(vid.blob, vid.ext, vid.ext);
+$('editAgain').onclick = () => { $('resVideo').pause(); enterDeco(); };
+$('againBtn').onclick = () => { S.pool = []; S.slots = []; S.stickers = []; S.selSticker = null; $('resVideo').pause(); go('home'); };
+
+/* ========== 分享網站 ========== */
+async function shareSite(){
+  const url = location.origin + location.pathname, data = { title:'PHOTO-MATIC', text:'線上像素拍貼機，拍完還附一段花絮影片 📸', url };
+  try{
+    if(navigator.share){ await navigator.share(data); track('share_site'); return; }
+    await navigator.clipboard.writeText(url); toast('網址複製好了，貼給朋友吧'); track('share_site', 'copy');
+  }catch(e){ if(e && e.name !== 'AbortError') prompt('複製這個網址分享給朋友', url); }
+}
+$('shareSite').onclick = shareSite;
+$('shareSiteHome').onclick = shareSite;
 </script>
 </body>
 </html>
