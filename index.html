@@ -407,13 +407,22 @@ function stepHead(el, n, onBack){
 }
 
 /* ========== 統計 ========== */
-function sessionId(){ let s = sessionStorage.getItem('sid'); if(!s){ s = Math.random().toString(36).slice(2); sessionStorage.setItem('sid', s); } return s; }
+// 每支手機或瀏覽器一個代號，用來算不重複訪客
+function sessionId(){
+  try{ let s = localStorage.getItem('pm-vid'); if(!s){ s = Math.random().toString(36).slice(2, 10); localStorage.setItem('pm-vid', s); } return s; }
+  catch(e){ return 'nostore'; }
+}
+function trafficSource(){
+  const utm = new URLSearchParams(location.search).get('utm_source'); if(utm) return utm;
+  try{ if(document.referrer){ const h = new URL(document.referrer).hostname; if(h !== location.hostname) return h; } }catch(e){}
+  return '';
+}
 function track(event, value = ''){
   if(!ENDPOINT) return;
-  const body = JSON.stringify({ event, value, session: sessionId(), device: innerWidth < 700 ? 'mobile' : 'desktop',
-    source: new URLSearchParams(location.search).get('utm_source') || '' });
-  navigator.sendBeacon ? navigator.sendBeacon(ENDPOINT, body) : fetch(ENDPOINT, { method:'POST', mode:'no-cors', body });
+  const body = JSON.stringify({ event, value, session: sessionId(), device: innerWidth < 700 ? 'mobile' : 'desktop', source: trafficSource() });
+  try{ navigator.sendBeacon ? navigator.sendBeacon(ENDPOINT, body) : fetch(ENDPOINT, { method:'POST', mode:'no-cors', body }); }catch(e){}
 }
+track('visit');
 
 /* ========== 背景產生 ========== */
 function rng(seed){ return () => { seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
@@ -1181,7 +1190,7 @@ $('developBtn').onclick = async () => {
   setDev(.12, '順便剪一段花絮影片…');
   try{ vid = await recordVideo(G, p => setDev(.12 + p * .88)); }catch(e){ console.warn(e); vid = null; }
   setDev(1, '好了！'); beep(1046, .1); await sleep(350);
-  showResult(); track('develop', S.layout);
+  showResult(); track('develop', `${S.layout}/${S.frame}`);
 };
 
 /* ========== 結果 ========== */

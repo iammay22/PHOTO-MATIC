@@ -15,6 +15,10 @@
 ## 上線
 GitHub Pages 開在 main 分支的根目錄。相機一定要用 https 網址打開，直接開檔案沒辦法用。
 
+## 數據後台
+- 試算表：PHOTO-MATIC 數據後台（說明、數據總覽、每日趨勢、遊玩分析、events）
+- `apps-script/Code.gs` 貼進試算表的 Apps Script，部署成網頁應用程式後，把網址填進 `index.html` 的 `ENDPOINT`
+
 ## 用到的外部資源
 - 去背：MediaPipe 的 selfie segmenter，從 jsDelivr 和 Google Storage 載入
 - 字型：俐方體 11 號（Cubic 11，放在 assets/fonts，授權是 OFL），還有 Google Fonts 的 Press Start 2P
