@@ -358,6 +358,9 @@ const BGS = [
   { id:'wood',     name:'木紋牆' },
   { id:'mottled',  name:'藍色畫布' },
   { id:'seamless', name:'灰背景紙' },
+  { id:'sage',     name:'灰綠畫布' },
+  { id:'coral',    name:'珊瑚紅牆' },
+  { id:'stars',    name:'黑星星' },
 ];
 const SHADOWS = {
   soft:  { k:16, mid:4, scale:1.02, dx:.025, dy:.012, alpha:.34 },
@@ -506,6 +509,37 @@ const BG_MAKERS = {
     x.fillStyle = '#3b5b89'; x.fillRect(0, 0, w, h);
     blotch(x, w, h, R, 180, .02, .16, ['#7697c6', '#28436b', '#93afd4', '#1e3354', '#5677a8'], .5);
     soften(c, .5); lighting(x, w, h, .5, .45, .16, .55); addNoise(x, w, h, R, 12); return c;
+  },
+  sage(w, h){
+    const c = makeCanvas(w, h), x = c.getContext('2d'), R = rng(71);
+    x.fillStyle = '#7c9075'; x.fillRect(0, 0, w, h);
+    blotch(x, w, h, R, 170, .02, .18, ['#9fb497', '#5d7058', '#adc2a4', '#6b8164', '#8aa082'], .45);
+    soften(c, .45); lighting(x, w, h, .5, .45, .2, .6); addNoise(x, w, h, R, 10); return c;
+  },
+  coral(w, h){
+    const c = makeCanvas(w, h), x = c.getContext('2d'), R = rng(79);
+    x.fillStyle = '#c8535a'; x.fillRect(0, 0, w, h);
+    blotch(x, w, h, R, 130, .03, .2, ['#d96c71', '#b4434b', '#e2868a', '#a83b43'], .32);
+    soften(c, .55); lighting(x, w, h, .5, .4, .16, .35); addNoise(x, w, h, R, 12); return c;
+  },
+  stars(w, h){
+    const c = makeCanvas(w, h), x = c.getContext('2d'), R = rng(83);
+    x.fillStyle = '#f3f2f5'; x.fillRect(0, 0, w, h);
+    const s = Math.max(w, h) / 10;
+    x.fillStyle = '#1d1b20';
+    const star = (cx, cy, r, rot) => {
+      x.beginPath();
+      for(let i = 0; i < 10; i++){ const rr = i % 2 ? r * .42 : r, a = rot + i * Math.PI / 5 - Math.PI / 2; x.lineTo(cx + Math.cos(a) * rr, cy + Math.sin(a) * rr); }
+      x.closePath(); x.fill();
+    };
+    // 大星星排成錯開的格子，小星星塞在縫隙
+    for(let gy = -1; gy * s * .85 < h + s; gy++) for(let gx = -1; gx * s < w + s; gx++){
+      const cx = gx * s + (gy % 2 ? s / 2 : 0) + (R() - .5) * s * .5, cy = gy * s * .85 + (R() - .5) * s * .4;
+      star(cx, cy, s * (.2 + R() * .32), (R() - .5) * .7);
+    }
+    const n = w * h / (s * s) * 1.3;
+    for(let i = 0; i < n; i++) star(R() * w, R() * h, s * (.06 + R() * .1), (R() - .5) * .8);
+    soften(c, .75); lighting(x, w, h, .5, .42, .08, .3); addNoise(x, w, h, R, 7); return c;
   },
   seamless(w, h){
     const c = makeCanvas(w, h), x = c.getContext('2d'), R = rng(53);
